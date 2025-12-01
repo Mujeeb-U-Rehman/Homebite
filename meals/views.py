@@ -13,21 +13,34 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     """
     Calculate the great circle distance between two points 
     on the earth (specified in decimal degrees) using Haversine formula.
-    Returns distance in kilometers.
+    Returns distance in kilometers, or None if invalid coordinates.
     """
-    # Convert decimal degrees to radians
-    lat1, lon1, lat2, lon2 = map(math.radians, [float(lat1), float(lon1), float(lat2), float(lon2)])
-    
-    # Haversine formula
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
-    c = 2 * math.asin(math.sqrt(a))
-    
-    # Radius of earth in kilometers
-    r = 6371
-    
-    return c * r
+    try:
+        # Validate and convert to float
+        lat1 = float(lat1) if lat1 is not None else None
+        lon1 = float(lon1) if lon1 is not None else None
+        lat2 = float(lat2) if lat2 is not None else None
+        lon2 = float(lon2) if lon2 is not None else None
+        
+        # Check for None values
+        if None in (lat1, lon1, lat2, lon2):
+            return None
+        
+        # Convert decimal degrees to radians
+        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+        
+        # Haversine formula
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+        c = 2 * math.asin(math.sqrt(a))
+        
+        # Radius of earth in kilometers
+        r = 6371
+        
+        return c * r
+    except (ValueError, TypeError):
+        return None
 
 
 def browse_meals(request):
@@ -80,7 +93,10 @@ def browse_meals(request):
     
     # Calculate distances and filter by distance
     meals_with_distance = []
-    max_distance = float(request.GET.get('max_distance', settings.DEFAULT_SEARCH_RADIUS_KM))
+    try:
+        max_distance = float(request.GET.get('max_distance', settings.DEFAULT_SEARCH_RADIUS_KM))
+    except (ValueError, TypeError):
+        max_distance = settings.DEFAULT_SEARCH_RADIUS_KM
     
     for meal in meals:
         if customer_lat and customer_lng and meal.cook.kitchen_location_lat and meal.cook.kitchen_location_lng:
@@ -88,10 +104,16 @@ def browse_meals(request):
                 customer_lat, customer_lng,
                 meal.cook.kitchen_location_lat, meal.cook.kitchen_location_lng
             )
-            if distance <= max_distance:
+            if distance is not None and distance <= max_distance:
                 meals_with_distance.append({
                     'meal': meal,
                     'distance': round(distance, 2)
+                })
+            elif distance is None:
+                # Invalid coordinates, include without distance
+                meals_with_distance.append({
+                    'meal': meal,
+                    'distance': None
                 })
         else:
             # If no location data, include with None distance

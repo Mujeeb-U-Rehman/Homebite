@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from orders.models import Order
 
 
@@ -27,9 +27,9 @@ def cook_dashboard(request):
     todays_stats = todays_orders.aggregate(
         total_orders=Count('id'),
         total_earnings=Sum('total_price'),
-        pending_count=Count('id', filter=models.Q(status='pending')),
-        ready_count=Count('id', filter=models.Q(status='ready')),
-        completed_count=Count('id', filter=models.Q(status='completed')),
+        pending_count=Count('id', filter=Q(status='pending')),
+        ready_count=Count('id', filter=Q(status='ready')),
+        completed_count=Count('id', filter=Q(status='completed')),
     )
     
     # Get all-time stats
@@ -100,8 +100,4 @@ def order_history_cook(request):
     ).select_related('customer', 'customer__user', 'meal').order_by('-created_at')
     
     return render(request, 'dashboard/order_history.html', {'orders': orders})
-
-
-# Import models at module level to avoid circular imports
-from django.db import models
 

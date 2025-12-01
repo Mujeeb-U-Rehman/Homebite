@@ -16,7 +16,15 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
+# In production, SECRET_KEY must be set via environment variable
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    if os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes'):
+        # Only allow insecure key in debug mode
+        SECRET_KEY = 'django-insecure-dev-key-for-local-development-only'
+    else:
+        raise ValueError('SECRET_KEY environment variable must be set in production')
+
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app').split(',')
