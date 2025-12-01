@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="text-center mb-4">Join HomeBite</h2>
+            <p class="text-center text-muted mb-5">Choose how you want to use HomeBite</p>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm text-center hover-card">
+                        <div class="card-body p-4">
+                            <div class="icon-box bg-primary bg-gradient text-white rounded-circle mx-auto mb-3" 
+                                 style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <h5 class="card-title">I'm a Customer</h5>
+                            <p class="card-text text-muted">
+                                I want to order delicious home-cooked meals from local cooks.
+                            </p>
+                            <a href="{% url 'accounts:customer_signup' %}" class="btn btn-primary">
+                                <i class="bi bi-person-plus"></i> Sign Up as Customer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm text-center hover-card">
+                        <div class="card-body p-4">
+                            <div class="icon-box bg-success bg-gradient text-white rounded-circle mx-auto mb-3" 
+                                 style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <h5 class="card-title">I'm a Cook</h5>
+                            <p class="card-text text-muted">
+                                I want to sell my home-cooked meals and earn money.
+                            </p>
+                            <a href="{% url 'accounts:cook_signup' %}" class="btn btn-success">
+                                <i class="bi bi-shop"></i> Sign Up as Cook
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-center mt-4">
+                Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

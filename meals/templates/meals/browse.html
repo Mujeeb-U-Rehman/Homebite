@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Browse Meals{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-funnel"></i> Filters</h6>
+                </div>
+                <div class="card-body">
+                    <form method="get" id="filterForm">
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Search</label>
+                            {{ form.search }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="max_distance" class="form-label">Max Distance (km)</label>
+                            {{ form.max_distance }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="max_price" class="form-label">Max Price (PKR)</label>
+                            {{ form.max_price }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="sort_by" class="form-label">Sort By</label>
+                            {{ form.sort_by }}
+                        </div>
+                        
+                        <input type="hidden" name="lat" id="filter_lat" value="{{ customer_lat|default:'' }}">
+                        <input type="hidden" name="lng" id="filter_lng" value="{{ customer_lng|default:'' }}">
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Apply Filters
+                        </button>
+                    </form>
+                    
+                    {% if not has_location %}
+                    <hr>
+                    <div class="text-center">
+                        <p class="text-muted small mb-2">Set your location to see nearby meals</p>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="setLocation()">
+                            <i class="bi bi-geo-alt"></i> Set My Location
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Meals Grid -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">
+                    <i class="bi bi-egg-fried text-primary"></i>
+                    Available Meals
+                </h4>
+                <span class="badge bg-primary">{{ meals|length }} meals found</span>
+            </div>
+            
+            {% if meals %}
+            <div class="row g-4">
+                {% for item in meals %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm hover-card">
+                        {% if item.meal.photo %}
+                        <img src="{{ item.meal.photo.url }}" class="card-img-top" alt="{{ item.meal.name }}" style="height: 180px; object-fit: cover;">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.meal.name }}</h5>
+                            <p class="card-text text-muted small mb-2">
+                                <i class="bi bi-person-circle"></i> {{ item.meal.cook.user.username }}
+                                {% if item.meal.cook.rating > 0 %}
+                                <span class="ms-2">
+                                    <i class="bi bi-star-fill text-warning"></i> {{ item.meal.cook.rating }}
+                                </span>
+                                {% endif %}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="h5 text-primary mb-0">PKR {{ item.meal.price }}</span>
+                                {% if item.distance is not None %}
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-geo-alt"></i> {{ item.distance }} km
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="card-text small text-muted mb-2">
+                                <i class="bi bi-clock"></i> Ready at: {{ item.meal.ready_time|time:"H:i" }}
+                            </p>
+                            <p class="card-text small text-muted">
+                                <i class="bi bi-basket"></i> {{ item.meal.quantity_available }} available
+                            </p>
+                        </div>
+                        
+                        <div class="card-footer bg-white border-0">
+                            <a href="{% url 'meals:detail' item.meal.pk %}" class="btn btn-primary w-100">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-search display-1 text-muted"></i>
+                <h4 class="mt-3">No meals found</h4>
+                <p class="text-muted">Try adjusting your filters or location</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Location Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-geo-alt"></i> Set Your Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Click on the map to set your location, or use the button below.</p>
+                <div id="locationMap" style="height: 400px; border-radius: 8px;"></div>
+                <div class="mt-3 text-center">
+                    <button type="button" class="btn btn-outline-primary" onclick="getCurrentLocation()">
+                        <i class="bi bi-crosshairs"></i> Use My Current Location
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="applyLocation()">
+                    <i class="bi bi-check"></i> Apply Location
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var locationMap = null;
+    var locationMarker = null;
+    var selectedLat = {{ customer_lat|default:"null" }};
+    var selectedLng = {{ customer_lng|default:"null" }};
+    
+    function setLocation() {
+        var modal = new bootstrap.Modal(document.getElementById('locationModal'));
+        modal.show();
+        
+        setTimeout(function() {
+            if (!locationMap) {
+                var defaultLat = selectedLat || 24.8607;
+                var defaultLng = selectedLng || 67.0011;
+                
+                locationMap = L.map('locationMap').setView([defaultLat, defaultLng], 12);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(locationMap);
+                
+                if (selectedLat && selectedLng) {
+                    locationMarker = L.marker([selectedLat, selectedLng]).addTo(locationMap);
+                }
+                
+                locationMap.on('click', function(e) {
+                    setMapMarker(e.latlng.lat, e.latlng.lng);
+                });
+            }
+            locationMap.invalidateSize();
+        }, 300);
+    }
+    
+    function setMapMarker(lat, lng) {
+        if (locationMarker) {
+            locationMap.removeLayer(locationMarker);
+        }
+        locationMarker = L.marker([lat, lng]).addTo(locationMap);
+        selectedLat = lat;
+        selectedLng = lng;
+    }
+    
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                setMapMarker(lat, lng);
+                locationMap.setView([lat, lng], 15);
+            }, function(error) {
+                alert('Could not get your location. Please click on the map instead.');
+            });
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    }
+    
+    function applyLocation() {
+        if (selectedLat && selectedLng) {
+            document.getElementById('filter_lat').value = selectedLat.toFixed(6);
+            document.getElementById('filter_lng').value = selectedLng.toFixed(6);
+            document.getElementById('filterForm').submit();
+        } else {
+            alert('Please select a location on the map first.');
+        }
+    }
+</script>
+{% endblock %}
