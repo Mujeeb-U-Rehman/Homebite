@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    Fresh, Home-Cooked Meals <br>
+                    <span class="text-warning">Near Your Office</span>
+                </h1>
+                <p class="lead mb-4">
+                    Discover delicious homemade meals from local cooks in your neighborhood. 
+                    Skip the fast food, enjoy real food!
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'meals:browse' %}" class="btn btn-warning btn-lg">
+                        <i class="bi bi-search"></i> Browse Meals
+                    </a>
+                    <a href="{% url 'accounts:cook_signup' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-person-plus"></i> Become a Cook
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center mt-4 mt-lg-0">
+                <div class="hero-image p-4">
+                    <i class="bi bi-egg-fried display-1"></i>
+                    <i class="bi bi-cup-hot display-1 ms-3"></i>
+                    <i class="bi bi-basket display-1 ms-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3 mx-auto" style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <h5 class="card-title">1. Set Your Location</h5>
+                        <p class="card-text text-muted">
+                            Enter your office location to find nearby home cooks within 1-2 km radius.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-success bg-gradient text-white rounded-circle mb-3 mx-auto" style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                            <i class="bi bi-cart-check"></i>
+                        </div>
+                        <h5 class="card-title">2. Choose Your Meal</h5>
+                        <p class="card-text text-muted">
+                            Browse available meals, check ratings, and place your order with just a few clicks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-warning bg-gradient text-white rounded-circle mb-3 mx-auto" style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                            <i class="bi bi-bag-check"></i>
+                        </div>
+                        <h5 class="card-title">3. Pickup or Delivery</h5>
+                        <p class="card-text text-muted">
+                            Pick up your fresh meal or get it delivered. Pay with cash - simple and secure!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- For Customers -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="mb-4">For Office Workers</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Fresh & Healthy:</strong> Home-cooked meals made with love
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Hyperlocal:</strong> Support cooks in your neighborhood
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Affordable:</strong> Quality food at reasonable prices
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Convenient:</strong> Order online, pay on delivery
+                    </li>
+                </ul>
+                <a href="{% url 'accounts:customer_signup' %}" class="btn btn-primary">
+                    <i class="bi bi-person-plus"></i> Sign Up as Customer
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4 text-center bg-light rounded">
+                        <i class="bi bi-people display-1 text-primary"></i>
+                        <p class="mt-3 mb-0 text-muted">Join thousands of satisfied customers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- For Cooks -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <h2 class="mb-4">For Home Cooks</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Earn From Home:</strong> Turn your cooking skills into income
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Flexible Schedule:</strong> Cook when it suits you
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Build Your Brand:</strong> Get ratings and reviews
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong>Easy Dashboard:</strong> Manage orders effortlessly
+                    </li>
+                </ul>
+                <a href="{% url 'accounts:cook_signup' %}" class="btn btn-success">
+                    <i class="bi bi-shop"></i> Become a Cook
+                </a>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4 text-center bg-white rounded">
+                        <i class="bi bi-shop display-1 text-success"></i>
+                        <p class="mt-3 mb-0 text-muted">Start your home cooking business today</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Get Started?</h2>
+        <p class="lead mb-4">Join HomeBite today and experience the joy of home-cooked meals!</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'meals:browse' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-search"></i> Browse Meals Now
+            </a>
+            <a href="{% url 'accounts:signup_choice' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-person-plus"></i> Create Account
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
